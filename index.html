@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Promesómetro — Patria Milagro</title>
+<meta name="description" content="Seguimiento ciudadano de los compromisos del gobierno Abelardo de la Espriella. Transparencia real, veeduría popular.">
+<meta property="og:title" content="Promesómetro — Patria Milagro 🇨🇴">
+<meta property="og:description" content="¿Está cumpliendo el nuevo gobierno? Síguelo aquí.">
+<meta property="og:image" content="https://haroldco45.github.io/promesometro/icon-512.png">
+<meta property="og:url" content="https://haroldco45.github.io/promesometro/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0b1a35">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --azul:    #0b1a35;
+    --azul2:   #102040;
+    --oro:     #f5c518;
+    --rojo:    #c0392b;
+    --verde:   #27ae60;
+    --gris:    #b0b8c4;
+    --blanco:  #f0f4fa;
+    --card-bg: #142238;
+    --cumplida: #27ae60;
+    --proceso:  #f39c12;
+    --incumplida: #c0392b;
+    --pendiente: #5a6a80;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--azul);
+    color: var(--blanco);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── SPLASH ── */
+  #splash {
+    position: fixed; inset: 0;
+    background: var(--azul);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.6s ease, visibility 0.6s;
+  }
+  #splash.hide { opacity: 0; visibility: hidden; }
+
+  .splash-bandera {
+    display: flex; gap: 3px; margin-bottom: 24px;
+  }
+  .splash-bandera span {
+    width: 36px; height: 5px; border-radius: 3px;
+  }
+  .splash-bandera span:nth-child(1) { background: var(--oro); }
+  .splash-bandera span:nth-child(2) { background: #003580; }
+  .splash-bandera span:nth-child(3) { background: var(--rojo); }
+
+  .splash-titulo {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-align: center;
+  }
+  .splash-titulo span { color: var(--oro); }
+
+  .splash-sub {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .splash-barra-wrap {
+    margin-top: 32px;
+    width: 160px; height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .splash-barra {
+    height: 100%;
+    width: 0%;
+    background: var(--oro);
+    border-radius: 2px;
+    animation: cargando 1.4s ease forwards;
+  }
+  @keyframes cargando { to { width: 100%; } }
+
+  .splash-dev {
+    position: absolute; bottom: 18px;
+    font-size: 0.6rem; color: rgba(255,255,255,0.25);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(11,26,53,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(245,197,24,0.2);
+    padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .nav-logo span { color: var(--oro); }
+  .nav-dias {
+    font-size: 0.7rem;
+    color: var(--gris);
+    letter-spacing: 0.08em;
+    text-align: right;
+  }
+  .nav-dias strong { color: var(--oro); font-size: 1rem; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 48px 20px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(245,197,24,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--oro);
+    margin-bottom: 14px;
+  }
+
+  .hero-titulo {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(2.2rem, 9vw, 4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: 0.02em;
+  }
+  .hero-titulo em {
+    font-style: normal;
+    color: var(--oro);
+  }
+
+  .hero-sub {
+    margin-top: 14px;
+    font-size: 0.9rem;
+    color: var(--gris);
+    max-width: 320px;
+    margin-left: auto; margin-right: auto;
+    line-height: 1.55;
+  }
+
+  /* ── MEDIDOR GENERAL ── */
+  .medidor-wrap {
+    margin: 32px 20px 0;
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 24px 20px;
+    border: 1px solid rgba(245,197,24,0.15);
+  }
+
+  .medidor-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gris);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .medidor-pct {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(3rem, 14vw, 5rem);
+    font-weight: 700;
+    text-align: center;
+    line-height: 1;
+    color: var(--oro);
+  }
+  .medidor-pct span { font-size: 0.45em; color: var(--gris); }
+
+  .barra-total {
+    margin-top: 14px;
+    height: 10px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+  }
+  .barra-seg.cumplida  { background: var(--cumplida); }
+  .barra-seg.proceso   { background: var(--proceso); }
+  .barra-seg.incumplida{ background: var(--incumplida); }
+  .barra-seg           { height: 100%; transition: width 1s ease; }
+
+  .medidor-leyenda {
+    display: flex; justify-content: center; gap: 16px;
+    margin-top: 12px; flex-wrap: wrap;
+  }
+  .leyenda-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.68rem; color: var(--gris);
+  }
+  .leyenda-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .leyenda-dot.cumplida   { background: var(--cumplida); }
+  .leyenda-dot.proceso    { background: var(--proceso); }
+  .leyenda-dot.incumplida { background: var(--incumplida); }
+  .leyenda-dot.pendiente  { background: var(--pendiente); }
+
+  .medidor-contadores {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 8px; margin-top: 16px;
+  }
+  .contador-item {
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 10px 6px;
+    text-align: center;
+  }
+  .contador-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.6rem; font-weight: 700;
+    line-height: 1;
+  }
+  .contador-num.cumplida   { color: var(--cumplida); }
+  .contador-num.proceso    { color: var(--proceso); }
+  .contador-num.incumplida { color: var(--incumplida); }
+  .contador-num.pendiente  { color: var(--gris); }
+  .contador-txt {
+    font-size: 0.58rem;
+    color: var(--gris);
+    margin-top: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── FILTROS ── */
+  .filtros {
+    display: flex; gap: 8px;
+    overflow-x: auto;
+    padding: 20px 20px 4px;
+    scrollbar-width: none;
+  }
+  .filtros::-webkit-scrollbar { display: none; }
+
+  .filtro-btn {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: transparent;
+    color: var(--gris);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .filtro-btn.activo {
+    background: var(--oro);
+    color: var(--azul);
+    border-color: var(--oro);
+    font-weight: 600;
+  }
+
+  /* ── SECCIÓN ÁREA ── */
+  .seccion-area {
+    padding: 20px 20px 6px;
+  }
+  .seccion-area-titulo {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--oro);
+    border-left: 3px solid var(--oro);
+    padding-left: 10px;
+    margin-bottom: 12px;
+  }
+
+  /* ── CARDS PROMESAS ── */
+  .cards {
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 16px;
+    border-left: 4px solid var(--pendiente);
+    display: none;
+    transition: transform 0.15s;
+  }
+  .card:active { transform: scale(0.98); }
+
+  .card.visible { display: block; }
+
+  .card.cumplida   { border-left-color: var(--cumplida); }
+  .card.proceso    { border-left-color: var(--proceso); }
+  .card.incumplida { border-left-color: var(--incumplida); }
+  .card.pendiente  { border-left-color: var(--pendiente); }
+
+  .card-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 10px;
+  }
+
+  .card-promesa {
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--blanco);
+    flex: 1;
+  }
+
+  .card-badge {
+    flex-shrink: 0;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .badge-cumplida   { background: rgba(39,174,96,0.2);  color: #5de49a; }
+  .badge-proceso    { background: rgba(243,156,18,0.2); color: #f5c842; }
+  .badge-incumplida { background: rgba(192,57,43,0.2);  color: #ff7b6e; }
+  .badge-pendiente  { background: rgba(90,106,128,0.2); color: #a0b0c4; }
+
+  .card-detalle {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--gris);
+    line-height: 1.55;
+  }
+
+  .card-fecha {
+    margin-top: 8px;
+    font-size: 0.65rem;
+    color: rgba(176,184,196,0.6);
+    letter-spacing: 0.05em;
+  }
+
+  .card-wa {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center; gap: 6px;
+    background: rgba(37,211,102,0.12);
+    border: 1px solid rgba(37,211,102,0.25);
+    color: #25d366;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.2s;
+  }
+  .card-wa:hover { background: rgba(37,211,102,0.2); }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 48px;
+    padding: 28px 20px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    text-align: center;
+  }
+  .footer-bandera {
+    display: flex; justify-content: center; gap: 3px;
+    margin-bottom: 14px;
+  }
+  .footer-bandera span {
+    width: 20px; height: 4px; border-radius: 2px;
+  }
+  .footer-bandera span:nth-child(1) { background: var(--oro); }
+  .footer-bandera span:nth-child(2) { background: #003580; }
+  .footer-bandera span:nth-child(3) { background: var(--rojo); }
+
+  .footer-aviso {
+    font-size: 0.65rem;
+    color: rgba(176,184,196,0.5);
+    line-height: 1.6;
+    max-width: 300px; margin: 0 auto 12px;
+  }
+  .footer-dev {
+    font-size: 0.58rem;
+    color: rgba(255,255,255,0.18);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gris);
+    font-size: 0.85rem;
+  }
+  .empty.visible { display: block; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-bandera">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="splash-titulo">PROMESÓ<em>METRO</em></div>
+  <div class="splash-sub">Patria Milagro · Veeduría Ciudadana</div>
+  <div class="splash-barra-wrap">
+    <div class="splash-barra"></div>
+  </div>
+  <div class="splash-dev">Desarrollada por Vibras Positivas HM — Derechos de Autor Reservados</div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">PROMESÓ<span>METRO</span></div>
+  <div class="nav-dias">
+    <strong id="diasGobierno">0</strong><br>días de gobierno
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">🇨🇴 Gobierno Abelardo de la Espriella · 2026–2030</div>
+  <h1 class="hero-titulo">¿Está<br><em>cumpliendo</em>?</h1>
+  <p class="hero-sub">Seguimiento ciudadano de las promesas del programa Patria Milagro. Actualizado semana a semana.</p>
+</div>
+
+<!-- MEDIDOR GENERAL -->
+<div class="medidor-wrap">
+  <div class="medidor-label">Cumplimiento General</div>
+  <div class="medidor-pct" id="pctGeneral">0<span>%</span></div>
+  <div class="barra-total" id="barraTotal">
+    <div class="barra-seg cumplida"   id="segCumplida"   style="width:0%"></div>
+    <div class="barra-seg proceso"    id="segProceso"    style="width:0%"></div>
+    <div class="barra-seg incumplida" id="segIncumplida" style="width:0%"></div>
+  </div>
+  <div class="medidor-leyenda">
+    <div class="leyenda-item"><div class="leyenda-dot cumplida"></div>Cumplida</div>
+    <div class="leyenda-item"><div class="leyenda-dot proceso"></div>En proceso</div>
+    <div class="leyenda-item"><div class="leyenda-dot incumplida"></div>Incumplida</div>
+    <div class="leyenda-item"><div class="leyenda-dot pendiente"></div>Pendiente</div>
+  </div>
+  <div class="medidor-contadores">
+    <div class="contador-item">
+      <div class="contador-num cumplida" id="cCumplida">0</div>
+      <div class="contador-txt">Cumplidas</div>
+    </div>
+    <div class="contador-item">
+      <div class="contador-num proceso" id="cProceso">0</div>
+      <div class="contador-txt">En proceso</div>
+    </div>
+    <div class="contador-item">
+      <div class="contador-num incumplida" id="cIncumplida">0</div>
+      <div class="contador-txt">Incumplidas</div>
+    </div>
+    <div class="contador-item">
+      <div class="contador-num pendiente" id="cPendiente">0</div>
+      <div class="contador-txt">Pendientes</div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTROS -->
+<div class="filtros" id="filtros">
+  <button class="filtro-btn activo" data-filtro="todas">Todas</button>
+  <button class="filtro-btn" data-filtro="cumplida">✅ Cumplidas</button>
+  <button class="filtro-btn" data-filtro="proceso">🔄 En proceso</button>
+  <button class="filtro-btn" data-filtro="incumplida">❌ Incumplidas</button>
+  <button class="filtro-btn" data-filtro="pendiente">⏳ Pendientes</button>
+</div>
+
+<!-- CONTENIDO DINÁMICO -->
+<div id="contenido"></div>
+<div class="empty" id="emptyState">No hay promesas en esta categoría todavía.</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-bandera">
+    <span></span><span></span><span></span>
+  </div>
+  <p class="footer-aviso">
+    Este es un ejercicio de veeduría ciudadana independiente, basado en el programa de gobierno publicado. No está afiliado al gobierno ni a partido político alguno.
+  </p>
+  <div class="footer-dev">Desarrollada por Vibras Positivas HM — Derechos de Autor Reservados</div>
+</footer>
+
+<script>
+// ════════════════════════════════════════════
+//  DATOS — Edita aquí cada semana
+//  estado: "cumplida" | "proceso" | "incumplida" | "pendiente"
+// ════════════════════════════════════════════
+const PROMESAS = [
+  {
+    area: "Economía y Empleo",
+    items: [
+      {
+        promesa: "Reducción del desempleo al 8% en los primeros 2 años",
+        estado: "pendiente",
+        detalle: "Tasa actual de desempleo en Colombia: 10.2% (DANE, jun 2026). Gobierno aún no ha presentado plan concreto.",
+        fecha: "Actualizado: jun 2026",
+        waTexto: "📊 Promesómetro Patria Milagro: Reducción del desempleo al 8% — Estado: PENDIENTE. Tasa actual 10.2%. Síguelo en: https://haroldco45.github.io/promesometro/"
+      },
+      {
+        promesa: "Eliminación de la reforma tributaria de Petro en 100 días",
+        estado: "proceso",
+        detalle: "El gobierno radicó proyecto de ley ante el Congreso el 15 de ago 2026. Primer debate programado para sep 2026.",
+        fecha: "Actualizado: ago 2026",
+        waTexto: "📊 Promesómetro Patria Milagro: Eliminación reforma tributaria Petro — Estado: EN PROCESO. Proyecto radicado, en debate. Síguelo en: https://haroldco45.github.io/promesometro/"
+      }
+    ]
+  },
+  {
+    area: "Seguridad y Paz",
+    items: [
+      {
+        promesa: "Fin de la política de paz total — retomar control territorial",
+        estado: "proceso",
+        detalle: "El gobierno anunció el cese de negociaciones con el ELN el 10 de ago 2026. Operaciones militares reiniciadas en Chocó y Arauca.",
+        fecha: "Actualizado: ago 2026",
+        waTexto: "📊 Promesómetro Patria Milagro: Fin política de paz total — Estado: EN PROCESO. Cese de negociaciones con ELN anunciado. Síguelo: https://haroldco45.github.io/promesometro/"
+      },
+      {
+        promesa: "Reducción del 30% en homicidios en el primer año",
+        estado: "pendiente",
+        detalle: "Indicador pendiente de primer reporte oficial. Se esperan cifras del Observatorio de Seguridad en oct 2026.",
+        fecha: "Actualizado: ago 2026",
+        waTexto: "📊 Promesómetro Patria Milagro: Reducción 30% homicidios — Estado: PENDIENTE. Primer reporte en oct 2026. Síguelo: https://haroldco45.github.io/promesometro/"
+      }
+    ]
+  },
+  {
+    area: "Salud",
+    items: [
+      {
+        promesa: "Desmonte de la reforma a la salud de Petro",
+        estado: "proceso",
+        detalle: "Decreto de emergencia sanitaria expedido el 8 de ago 2026 para congelar la implementación. Reforma legislativa en preparación.",
+        fecha: "Actualizado: ago 2026",
+        waTexto: "📊 Promesómetro Patria Milagro: Desmonte reforma salud Petro — Estado: EN PROCESO. Decreto de emergencia expedido. Síguelo: https://haroldco45.github.io/promesometro/"
+      }
+    ]
+  },
+  {
+    area: "Educación",
+    items: [
+      {
+        promesa: "Dotación de computadores a 500.000 estudiantes de colegios públicos",
+        estado: "pendiente",
+        detalle: "Promesa incluida en el programa de gobierno. Aún sin contrato ni cronograma publicado.",
+        fecha: "Actualizado: ago 2026",
+        waTexto: "📊 Promesómetro Patria Milagro: 500K computadores estudiantes — Estado: PENDIENTE. Sin cronograma aún. Síguelo: https://haroldco45.github.io/promesometro/"
+      }
+    ]
+  },
+  {
+    area: "Institucionalidad",
+    items: [
+      {
+        promesa: "Auditoría independiente a la deuda pública heredada",
+        estado: "pendiente",
+        detalle: "Anunciada en discurso de posesión del 7 ago 2026. Sin decreto reglamentario todavía.",
+        fecha: "Actualizado: ago 2026",
+        waTexto: "📊 Promesómetro Patria Milagro: Auditoría deuda pública — Estado: PENDIENTE. Anunciada en posesión, sin decreto. Síguelo: https://haroldco45.github.io/promesometro/"
+      }
+    ]
+  }
+];
+
+// ════════════════════════════════════════════
+//  FECHA DE INICIO DEL GOBIERNO
+// ════════════════════════════════════════════
+const INICIO_GOBIERNO = new Date('2026-08-07T00:00:00-05:00');
+
+// ════════════════════════════════════════════
+//  LÓGICA
+// ════════════════════════════════════════════
+function calcularDias() {
+  const ahora = new Date();
+  const diff = Math.floor((ahora - INICIO_GOBIERNO) / (1000 * 60 * 60 * 24));
+  return diff < 0 ? 0 : diff;
+}
+
+function calcularStats() {
+  let c = 0, p = 0, i = 0, pend = 0, total = 0;
+  PROMESAS.forEach(area => {
+    area.items.forEach(item => {
+      total++;
+      if (item.estado === 'cumplida')   c++;
+      if (item.estado === 'proceso')    p++;
+      if (item.estado === 'incumplida') i++;
+      if (item.estado === 'pendiente')  pend++;
+    });
+  });
+  return { c, p, i, pend, total };
+}
+
+function badgeLabel(estado) {
+  const map = {
+    cumplida: '✅ Cumplida',
+    proceso: '🔄 En proceso',
+    incumplida: '❌ Incumplida',
+    pendiente: '⏳ Pendiente'
+  };
+  return map[estado] || estado;
+}
+
+function buildCards(filtro) {
+  const contenido = document.getElementById('contenido');
+  const empty = document.getElementById('emptyState');
+  contenido.innerHTML = '';
+  let hayCards = false;
+
+  PROMESAS.forEach(area => {
+    const itemsFiltrados = filtro === 'todas'
+      ? area.items
+      : area.items.filter(item => item.estado === filtro);
+
+    if (itemsFiltrados.length === 0) return;
+    hayCards = true;
+
+    const secDiv = document.createElement('div');
+    secDiv.className = 'seccion-area';
+    secDiv.innerHTML = `<div class="seccion-area-titulo">${area.area}</div>`;
+    contenido.appendChild(secDiv);
+
+    const cardsDiv = document.createElement('div');
+    cardsDiv.className = 'cards';
+
+    itemsFiltrados.forEach(item => {
+      const waUrl = `https://wa.me/?text=${encodeURIComponent(item.waTexto)}`;
+      const card = document.createElement('div');
+      card.className = `card visible ${item.estado}`;
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-promesa">${item.promesa}</div>
+          <div class="card-badge badge-${item.estado}">${badgeLabel(item.estado)}</div>
+        </div>
+        <div class="card-detalle">${item.detalle}</div>
+        <div class="card-fecha">${item.fecha}</div>
+        <a class="card-wa" href="${waUrl}" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Compartir en WhatsApp
+        </a>
+      `;
+      cardsDiv.appendChild(card);
+    });
+
+    contenido.appendChild(cardsDiv);
+  });
+
+  if (!hayCards) {
+    empty.classList.add('visible');
+  } else {
+    empty.classList.remove('visible');
+  }
+}
+
+function actualizarMedidor() {
+  const { c, p, i, pend, total } = calcularStats();
+  const pct = total > 0 ? Math.round((c / total) * 100) : 0;
+
+  document.getElementById('pctGeneral').innerHTML = `${pct}<span>%</span>`;
+  document.getElementById('cCumplida').textContent   = c;
+  document.getElementById('cProceso').textContent    = p;
+  document.getElementById('cIncumplida').textContent = i;
+  document.getElementById('cPendiente').textContent  = pend;
+
+  setTimeout(() => {
+    document.getElementById('segCumplida').style.width   = `${(c/total)*100}%`;
+    document.getElementById('segProceso').style.width    = `${(p/total)*100}%`;
+    document.getElementById('segIncumplida').style.width = `${(i/total)*100}%`;
+  }, 400);
+}
+
+function initFiltros() {
+  document.getElementById('filtros').addEventListener('click', e => {
+    const btn = e.target.closest('.filtro-btn');
+    if (!btn) return;
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    buildCards(btn.dataset.filtro);
+  });
+}
+
+function init() {
+  document.getElementById('diasGobierno').textContent = calcularDias();
+  actualizarMedidor();
+  buildCards('todas');
+  initFiltros();
+  setTimeout(() => document.getElementById('splash').classList.add('hide'), 1600);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+<!-- SERVICE WORKER -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
